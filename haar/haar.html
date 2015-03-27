@@ -1,0 +1,97 @@
+<html>
+  <head>
+    <title>Haar Encoding Demo</title>
+  </head>
+  <body onLoad="javascript:reset()">
+    <script src="namespace.js"></script>
+    <script src="haar.js"></script>
+    <script src="haar_incremental.js"></script>
+    <script lang="javascript">
+      var data = [9, 7, 3, 5, 6, 10, 6, 2];
+      var len = data.length;
+      var encoded = function() {
+        asr.haar.pad(data, asr.haar.nearestPowerOfTwo(data.length),
+                     asr.haar.average(data));
+        return asr.haar.encode(data);
+      }();
+      var currentIndex;
+      var incr;
+      function reset() {
+        currentIndex = 0;
+        incr = asr.haar.incr.Incremental();
+        incr.setSize(len);
+        document.getElementById("values").innerHTML = "";
+        refreshUi();
+      };
+
+      function addNext() {
+        if (currentIndex < len) {
+          incr.addNum(encoded[currentIndex++]);
+          document.getElementById("values").innerHTML = encoded.slice(0, currentIndex).join(", ");
+          refreshUi();
+        }
+      }
+      
+      function refreshUi() {
+        var container = document.getElementById("container");
+        var heights = incr.getData();
+        var max = 0;
+        for (var i = 0; i < data.length; i++) {
+          max = Math.max(max, data[i]);
+        }
+        for (var i = 0; i < heights.length; i++) {
+          var element;
+          if (container.children.length < i + 1) {
+            element = document.createElement('span');
+            element.setAttribute('class', 'bar');
+            container.appendChild(element);
+          } else {
+            element = container.children[i];
+          }
+          element.innerHTML = "<span style=\"position: relative; top: " + (5 * heights[i] + 20) + "px\">" +
+              heights[i] + "</span>";;
+          element.setAttribute('style', 'height: ' + (heights[i] * 5) + 'px; margin-top: ' +
+                               ((20 - heights[i]) * 5) + 'px');
+        }
+      }
+
+      function doStuff() {
+        if (currentIndex == data.length) {
+          reset();
+        } else {
+          addNext();
+        }
+      }
+    </script>
+    <style type="text/css">
+      body {
+        font-family: Arial, Verdana;
+      }
+      #container {
+         height: 160px;
+      }
+      span.bar {
+        background-color: #aabbff;
+        width: 50px;
+        display: block;
+        float: left;
+        margin: 5px;
+      }
+      .control {
+         padding: 10px 0;
+      }
+      .btn {
+        font-size: 15px;
+        padding: 5px 8px;
+      }
+      .vcontainer {
+        padding: 10px 0;
+      }
+    </style>
+    <div id="container"></div>
+    <div class="control">
+      <button class="btn" onClick="javascript:doStuff()">Run</button>
+      <div class="vcontainer">Values seen so far: <span id="values"></span></div>
+    </div>
+  </body>
+</html>
