@@ -9,6 +9,10 @@ asr.haar.incr.Incremental = function() {
   var addNum = function(num) {
     codes.push(num);
   };
+  var popNum = function() {
+    codes.pop();
+  };
+
   var getData = function() {
     if (count == 0) {
       return [];
@@ -24,6 +28,7 @@ asr.haar.incr.Incremental = function() {
   return {
     'setSize': setSize,
     'addNum': addNum,
+    'popNum': popNum,
     'getData': getData
   };
 };

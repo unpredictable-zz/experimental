@@ -10,9 +10,10 @@
       var data = [9, 7, 3, 5, 6, 10, 6, 2];
       var len = data.length;
       var encoded = function() {
-        asr.haar.pad(data, asr.haar.nearestPowerOfTwo(data.length),
-                     asr.haar.average(data));
-        return asr.haar.encode(data);
+        var padded = [].concat(data);
+        asr.haar.pad(padded, asr.haar.nearestPowerOfTwo(data.length),
+                     asr.haar.average(padded));
+        return asr.haar.encode(padded);
       }();
       var currentIndex;
       var incr;
@@ -20,19 +21,29 @@
         currentIndex = 0;
         incr = asr.haar.incr.Incremental();
         incr.setSize(len);
-        document.getElementById("values").innerHTML = "";
         refreshUi();
       };
 
       function addNext() {
         if (currentIndex < len) {
           incr.addNum(encoded[currentIndex++]);
-          document.getElementById("values").innerHTML = encoded.slice(0, currentIndex).join(", ");
           refreshUi();
         }
       }
+
+      function goBack() {
+        incr.popNum();
+        if (currentIndex > 0) {
+          currentIndex--;
+        }
+        refreshUi();
+      }
       
       function refreshUi() {
+        document.getElementById("values").innerHTML = encoded.slice(0, currentIndex).join(" &nbsp; ") +
+            (currentIndex == 0 || currentIndex == data.length ? "" : " &nbsp; ") +
+            "<span class=\"grayed\">" + encoded.slice(currentIndex).join(" &nbsp; ") + "</span>";
+        document.getElementById("ovalues").innerHTML = data.join(" &nbsp; ");
         var container = document.getElementById("container");
         var heights = incr.getData();
         var max = 0;
@@ -48,27 +59,20 @@
           } else {
             element = container.children[i];
           }
-          element.innerHTML = "<span style=\"position: relative; top: " + (5 * heights[i] + 20) + "px\">" +
-              heights[i] + "</span>";;
-          element.setAttribute('style', 'height: ' + (heights[i] * 5) + 'px; margin-top: ' +
-                               ((20 - heights[i]) * 5) + 'px');
+          element.innerHTML = "<span style=\"position: relative; top: " + (20 * heights[i] + 20) + "px\">" +
+              heights[i] + "</span>";
+          element.setAttribute('style', 'height: ' + (heights[i] * 20) + 'px; margin-top: ' +
+                               ((12 - heights[i]) * 20) + 'px');
         }
       }
 
-      function doStuff() {
-        if (currentIndex == data.length) {
-          reset();
-        } else {
-          addNext();
-        }
-      }
     </script>
     <style type="text/css">
       body {
         font-family: Arial, Verdana;
       }
       #container {
-         height: 160px;
+         height: 300px;
       }
       span.bar {
         background-color: #aabbff;
@@ -85,13 +89,24 @@
         padding: 5px 8px;
       }
       .vcontainer {
+        font-family: "Courier New";
         padding: 10px 0;
+      }
+      .grayed {
+        color: #aaa;
+        font-weight: normal;
+      }
+      #values {
+        color: #0000ff;
+        font-weight: bold;
       }
     </style>
     <div id="container"></div>
     <div class="control">
-      <button class="btn" onClick="javascript:doStuff()">Run</button>
-      <div class="vcontainer">Values seen so far: <span id="values"></span></div>
+      <button class="btn" onClick="javascript:goBack()">Previous</button>
+      <button class="btn" onClick="javascript:addNext()">Next</button>
+      <div class="vcontainer">Original: <span id="ovalues"></span></div>
+      <div class="vcontainer">Encoded : <span id="values"></span></div>
     </div>
   </body>
 </html>
