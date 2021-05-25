@@ -2,7 +2,7 @@
   "locations": [
     {
       "id": 1,
-      "title": "San Jose"
+      "title": "San Jose",
       "summary": {
         "location": "San Jose",
         "temperature": "79",
