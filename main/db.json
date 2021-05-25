@@ -1,0 +1,20 @@
+{
+  "locations": [
+    {
+      "id": 1,
+      "title": "San Jose"
+      "summary": {
+        "location": "San Jose",
+        "temperature": "79",
+        "temperatureUnit": "˚F",
+        "highLow": "Hi 70˚ | Lo 85˚",
+        "feelsLike": "Feels like: 79˚",
+        "description": "Mostly sunny",
+        "iconCode": 3
+      }
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}
